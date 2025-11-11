@@ -1,4 +1,3 @@
-// const WeatherAPI = " http://api.weatherapi.com/v1/bced4855a7614809aa4153324251111";
 import { Routes, Route } from "react-router-dom";
 import WeatherLookup from './pages/WeatherLookup';
 import WeatherDisplay from './pages/WeatherDisplay';
@@ -13,7 +12,7 @@ function App() {
       <Header/>
       <Routes>
         <Route path="/" element={<WeatherLookup/>}></Route>
-        <Route path="/:region" element={<WeatherDisplay/>}></Route>
+        <Route path="/weather" element={<WeatherDisplay/>}></Route>
       </Routes>
       <Footer/>
     </>
