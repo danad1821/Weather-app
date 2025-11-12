@@ -16,12 +16,8 @@ main {
   overflow-x: hidden;
 }
 
-button{
+button, tr{
     cursor: pointer;
-}
-
-.weatherLookup{
-
 }
 
 .weatherLookup input{

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import WeatherCard from "../components/WeatherCard";
 import { useNavigate } from "react-router-dom";
+import History from "../components/History";
 
 const getCurrentWeatherEmoji = (conditionText, currentTempC) => {
   const lowerCaseText = conditionText.toLowerCase();
@@ -111,8 +112,8 @@ export default function WeatherDisplay() {
       <main className="flex flex-col items-center justify-center grow bg-[#D1E8FF] h-screen text-red-700 text-xl">
         Error: {error}
         <button type="button" onClick={() => navigate("/")}>
-          Search another location
-        </button>
+        Search another location
+      </button>
       </main>
     );
   }
@@ -122,7 +123,7 @@ export default function WeatherDisplay() {
   const currentTemp = weatherData?.current?.temp_c || "N/A";
   const conditionText = weatherData?.current?.condition?.text || "Clear";
   const currentEmoji = getCurrentWeatherEmoji(conditionText, currentTemp);
-  return (
+  return(
     <main className="flex flex-col items-center justify-center grow bg-[#D1E8FF]">
       {locationName && country && (
         <h1 className="text-4xl font-bold mb-1">
@@ -172,6 +173,7 @@ export default function WeatherDisplay() {
           ))}
         </div>
       </section>
+      <History/>
 
       {/* Call to Action Button (Placeholder for Assessment 2) */}
       {/* <button
