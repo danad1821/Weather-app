@@ -30,7 +30,7 @@ cd server && npm install
 
 In your **first terminal**, navigate to the server directory and start the Node.js Express server.
 ```bash
-cd server
+cd weather-app\server
 node index.mjs
 # The server should start on http://localhost:5000 and connect to MongoDB.
 ```
