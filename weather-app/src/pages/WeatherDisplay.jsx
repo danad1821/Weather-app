@@ -173,23 +173,11 @@ export default function WeatherDisplay() {
           ))}
         </div>
       </section>
-      <History/>
+      <History locationFilter={locationQuery}/>
 
-      {/* Call to Action Button (Placeholder for Assessment 2) */}
-      {/* <button
-        className="mt-10 px-8 py-3 bg-[#0B1957] text-white rounded-full text-lg font-semibold hover:bg-opacity-90 transition"
-        onClick={() =>
-          alert(
-            "Ready to implement SAVE feature (CRUD - Create) for Assessment 2!"
-          )
-        }
-      >
-        Save This Location
-      </button> */}
-      <button type="button" onClick={() => navigate("/")}>
+      <button type="button" className="back-btn" onClick={() => navigate("/")}>
         Search another location
       </button>
-      <button>Export as PDF</button>
     </main>
   );
 }

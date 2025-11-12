@@ -28,7 +28,7 @@ button, tr{
     outline: none;
 }
 
-.weatherLookup button, .header-btn {
+.weatherLookup button, .header-btn, .back-btn {
   cursor: pointer;
   background-color: var(--secondary-color);
   border: 1px solid var(--secondary-color);

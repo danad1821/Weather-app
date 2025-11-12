@@ -115,9 +115,22 @@ app.post('/api/history', async (req, res) => {
 // READ: Fetch all historical weather lookups
 app.get('/api/history', async (req, res) => {
     try {
+        // The location parameter is now read from the URL query string (e.g., /api/history?location=London)
+        const locationFilter = req.query.location; 
+
         const collection = db.collection(COLLECTION_NAME);
-        // Fetch all, sorted by creation date descending
-        const history = await collection.find({}).sort({ createdAt: -1 }).toArray();
+        
+        const filter = {};
+        
+        if (locationFilter) {
+            // Use a MongoDB Regular Expression to perform a case-insensitive search
+            // for the location string within the 'locationQuery' field.
+            filter.locationQuery = { $regex: locationFilter, $options: 'i' };
+        }
+        
+        // Fetch data using the constructed filter and sort by creation date descending
+        const history = await collection.find(filter).sort({ createdAt: -1 }).toArray();
+        
         res.json(history);
     } catch (error) {
         console.error("READ Error:", error.message);

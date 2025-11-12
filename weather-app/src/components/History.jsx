@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
-import { CiTrash, CiEdit, CiSave, CiSquareCheck } from 'react-icons/ci';
+import { CiTrash, CiEdit, CiSquareCheck } from 'react-icons/ci';
 
 // Assuming your backend is running on http://localhost:5000
 const API_BASE_URL = "http://localhost:5000/api/history"; 
@@ -24,7 +24,7 @@ const getAvgTemp = (forecast) => {
 
 // Note: The History component is designed to be self-contained for CRUD operations.
 // We are adding props here in case it needs to interact with the current weather context later.
-export default function History() {
+export default function History({locationFilter}) {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -39,7 +39,8 @@ export default function History() {
     const fetchHistory = useCallback(async () => {
         try {
             setLoading(true);
-            const response = await axios.get(API_BASE_URL);
+            const response = await axios.get(`${API_BASE_URL}?location=${encodeURIComponent(locationFilter)}`);
+            console.log("here")
             // Sort by createdAt descending to show latest first
             setHistory(response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
             setError(null);
@@ -58,28 +59,25 @@ export default function History() {
         }
     }, [isToggled, fetchHistory]);
 
-    // --- DELETE Operation ---
+    // DELETE
     const handleDelete = async (id) => {
-        // Using custom modal/confirmation instead of alert() or window.confirm()
+        
         if (!confirmDeletion(id)) return;
 
         try {
             await axios.delete(`${API_BASE_URL}/${id}`);
-            // Remove the deleted item from state to update the UI
             setHistory(prevHistory => prevHistory.filter(item => item._id !== id));
         } catch (err) {
             console.error("Failed to delete history item:", err);
-            alert("Failed to delete the record."); // Using a temporary alert here for error messages
+            alert("Failed to delete the record."); 
         }
     };
 
-    // Placeholder for custom confirmation modal (using simple window.confirm for now as a temporary measure)
     const confirmDeletion = (id) => {
-        // IMPORTANT: In a production app, replace this with a beautiful custom modal component.
         return window.confirm("Are you sure you want to delete this history item?");
     }
 
-    // --- UPDATE (Modal Handlers) ---
+    // UPDATE 
     const openEditModal = (item) => {
         setEditingItem(item);
         setNewNotes(item.notes || '');
@@ -98,7 +96,6 @@ export default function History() {
         try {
             await axios.patch(`${API_BASE_URL}/${editingItem._id}`, { notes: newNotes });
             
-            // Update the local state with the new notes
             setHistory(prevHistory => 
                 prevHistory.map(item => 
                     item._id === editingItem._id ? { ...item, notes: newNotes } : item
@@ -107,7 +104,7 @@ export default function History() {
             closeEditModal();
         } catch (err) {
             console.error("Failed to update notes:", err);
-            alert("Failed to save notes."); // Using a temporary alert here for error messages
+            alert("Failed to save notes."); 
         }
     };
 
@@ -120,7 +117,7 @@ export default function History() {
                 style={{ justifyContent: 'space-between', margin: '0 auto', maxWidth: '800px', padding: '15px', marginTop: '30px' }}
             >
                 {isToggled ? <CiSquareCheck className='text-3xl mr-2' /> : " "}
-                {isToggled ? "Hide Weather History" : "View Weather History (CRUD Demo)"}
+                {isToggled ? "Hide Weather History" : "View Weather History"}
             </h2>
             
             {isToggled && (
@@ -136,7 +133,7 @@ export default function History() {
                         <div style={{ overflowX: 'auto' }}>
                             <table className="w-full border-collapse">
                                 <thead>
-                                    <tr className="bg-[#0B1957] text-white">
+                                    <tr className="bg-[#0B1957] text-white" style={{color: 'white'}}>
                                         <th className="p-3 text-left rounded-tl-lg">Location</th>
                                         <th className="p-3 text-left">Date Range</th>
                                         <th className="p-3 text-left hidden sm:table-cell">Avg. High</th>
