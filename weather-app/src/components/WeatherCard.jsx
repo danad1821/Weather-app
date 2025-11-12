@@ -37,7 +37,7 @@ export default function WeatherCard({ dayWeather }) {
 
     return (
         <div
-            className="flex flex-col items-center justify-between p-4 rounded-lg bg-white/80 shadow-md text-[#0B1957]"
+            className="flex flex-col items-center justify-between p-4 rounded-lg bg-white shadow-md text-[#0B1957] weather-card"
         >
             <div className="text-center mb-2">
                 <p className="font-medium text-sm mb-1">
@@ -53,14 +53,14 @@ export default function WeatherCard({ dayWeather }) {
                 <div className="flex flex-col items-start">
                     <span className="text-xs font-light opacity-80">Low</span>
                     <span className="text-lg font-medium">
-                        {lowTemp}°
+                        {lowTemp}°C
                     </span>
                 </div>
                 
                 <div className="flex flex-col items-end">
                     <span className="text-xs font-light opacity-80">High</span>
                     <span className="text-lg font-bold text-[#B29414]">
-                        {highTemp}°
+                        {highTemp}°C
                     </span>
                 </div>
             </div>

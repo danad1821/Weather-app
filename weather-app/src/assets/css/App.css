@@ -32,7 +32,7 @@ button{
     outline: none;
 }
 
-.weatherLookup button {
+.weatherLookup button, .header-btn {
   cursor: pointer;
   background-color: var(--secondary-color);
   border: 1px solid var(--secondary-color);
@@ -42,10 +42,79 @@ button{
   font-size: 20px;
   margin: 5px 0;
 }
-.weatherLookup button:hover{
+.weatherLookup button:hover, .header-btn:hover{
     background-color: white;
     color: black;
     
+}
+
+.weather-card{
+    background-color: white;
+    margin: 10px 5px;
+    padding: 2%;
+    border-radius: 12px;
+    width: 200px;
+}
+
+/* --- Modal Styles for Info Button --- */
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7); /* Black with 70% opacity */
+    z-index: 9999; /* High Z-index to ensure it's on top */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 512px; /* max-w-lg approx */
+    max-height: 90vh; /* max-h-[90vh] */
+    overflow-y: auto; /* Scrollable content */
+    position: relative;
+    padding: 24px;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 8px;
+    border: none;
+    background: none;
+    color: #4b5563; /* text-gray-700 approx */
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.modal-close-btn:hover {
+    background-color: #e5e7eb; /* hover:bg-gray-200 approx */
+}
+
+.modal-text-content > p {
+    margin-top: 12px;
+    color: #4b5563; /* text-gray-700 approx */
+    line-height: 1.5; /* leading-relaxed approx */
+    font-size: 14px; /* text-sm approx */
+}
+
+.modal-list {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 12px;
+}
+
+.modal-list > li {
+    margin-bottom: 12px;
 }
 
 footer {

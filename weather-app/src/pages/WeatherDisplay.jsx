@@ -1,6 +1,50 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import WeatherCard from "../components/WeatherCard";
+import { useNavigate } from "react-router-dom";
+
+const getCurrentWeatherEmoji = (conditionText, currentTempC) => {
+  const lowerCaseText = conditionText.toLowerCase();
+  let emoji = "❓"; // Default
+
+  // Logic based on condition text
+  if (lowerCaseText.includes("sunny") || lowerCaseText.includes("clear")) {
+    emoji = "☀️";
+
+    // Temperature-based modification for clear/sunny days
+    if (currentTempC >= 30) {
+      emoji = "😎"; // Hot: Sun with sunglasses
+    } else if (currentTempC < 10) {
+      emoji = "🥶"; // Cold: Freezing face
+    }
+  } else if (lowerCaseText.includes("partly cloudy")) {
+    emoji = "⛅";
+  } else if (
+    lowerCaseText.includes("cloudy") ||
+    lowerCaseText.includes("overcast")
+  ) {
+    emoji = "☁️";
+  } else if (
+    lowerCaseText.includes("rain") ||
+    lowerCaseText.includes("drizzle") ||
+    lowerCaseText.includes("showers")
+  ) {
+    emoji = "🌧️";
+  } else if (
+    lowerCaseText.includes("snow") ||
+    lowerCaseText.includes("sleet") ||
+    lowerCaseText.includes("blizzard")
+  ) {
+    emoji = "❄️";
+  } else if (
+    lowerCaseText.includes("thunder") ||
+    lowerCaseText.includes("storm")
+  ) {
+    emoji = "⛈️";
+  }
+
+  return emoji;
+};
 
 export default function WeatherDisplay() {
   const [searchParams] = useSearchParams();
@@ -8,6 +52,7 @@ export default function WeatherDisplay() {
   const [weatherData, setWeatherData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   // Placeholder data for rendering before API response arrives
   const dummyForecast = [
@@ -65,6 +110,9 @@ export default function WeatherDisplay() {
     return (
       <main className="flex flex-col items-center justify-center grow bg-[#D1E8FF] h-screen text-red-700 text-xl">
         Error: {error}
+        <button type="button" onClick={() => navigate("/")}>
+          Search another location
+        </button>
       </main>
     );
   }
@@ -73,57 +121,60 @@ export default function WeatherDisplay() {
   const country = weatherData?.location?.country || "Unknown Country";
   const currentTemp = weatherData?.current?.temp_c || "N/A";
   const conditionText = weatherData?.current?.condition?.text || "Clear";
-
+  const currentEmoji = getCurrentWeatherEmoji(conditionText, currentTemp);
   return (
     <main className="flex flex-col items-center justify-center grow bg-[#D1E8FF]">
-      <div className="flex flex-col items-center text-[#0B1957] my-8">
-        {locationName && country && (
-          <h1 className="text-4xl font-bold mb-1">
-            {locationName}, {country}
-          </h1>
-        )}
+      {locationName && country && (
+        <h1 className="text-4xl font-bold mb-1">
+          {locationName}, {country}
+        </h1>
+      )}
 
-        {/* Weather Icon (Placeholder) */}
-        <div className="text-8xl my-4 text-[#B29414]">☀️</div>
+      {/* Weather Icon */}
+      {currentEmoji && (
+        <div className="text-9xl my-4 text-[#B29414]">
+          {currentEmoji || "☀️"}
+        </div>
+      )}
 
-        {/* Temperature */}
-        {currentTemp && (
-          <p className="text-8xl font-extrabold">{currentTemp}°</p>
-        )}
-        {conditionText && <p className="text-xl mt-2">{conditionText}</p>}
+      {/* Temperature */}
+      {currentTemp && (
+        <p className="text-8xl font-extrabold">{currentTemp}°C</p>
+      )}
+      {conditionText && <p className="text-xl mt-2">{conditionText}</p>}
 
-        {/* Detail Stats Grid */}
-        <div className="grid grid-cols-3 gap-6 mt-8 p-4 bg-white/50 rounded-xl shadow-lg text-sm text-center max-w-xs">
-          <div>
-            <p className="font-semibold">Humidity</p>
-            <p>{weatherData?.current?.humidity || "N/A"}%</p>
-          </div>
-          <div>
-            <p className="font-semibold">Wind</p>
-            <p>{weatherData?.current?.wind_kph || "N/A"} kph</p>
-          </div>
-          <div>
-            <p className="font-semibold">Feels Like</p>
-            <p>{weatherData?.current?.feelslike_c || "N/A"}°</p>
-          </div>
+      {/* Detail Stats Grid */}
+      <div className="grid grid-cols-3 gap-6 mt-8 p-4 bg-white/50 rounded-xl shadow-lg text-sm text-center max-w-xs">
+        <div>
+          <p className="font-semibold">Humidity</p>
+          <p>{weatherData?.current?.humidity || "N/A"}%</p>
+        </div>
+        <div>
+          <p className="font-semibold">Wind</p>
+          <p>{weatherData?.current?.wind_kph || "N/A"} kph</p>
+        </div>
+        <div>
+          <p className="font-semibold">Feels Like</p>
+          <p>{weatherData?.current?.feelslike_c || "N/A"}°C</p>
         </div>
       </div>
-      <section className="w-full max-w-xl mt-8 p-6 rounded-xl bg-[#DBDBDB] shadow-inner">
-        <h2 className="text-xl font-bold text-[#0B1957] mb-4">
+      <section
+        className="w-full max-w-xl mt-8 p-20 rounded-xl bg-[#DBDBDB] shadow-inner"
+        style={{ padding: "25px" }}
+      >
+        <h2 className="text-xl font-bold text-[#0B1957] mb-4 text-center ">
           5-Day Forecast
         </h2>
         {/* Use a grid layout for a clean, modern look */}
-        <div className="grid grid-cols-5 gap-4">
-          {weatherData?.forecast
-            ?.slice(0, 5)
-            .map((dayData, index) => (
-              <WeatherCard key={index} dayWeather={dayData} />
-            ))}
+        <div className="flex justify-center items-center flex-wrap">
+          {weatherData?.forecast?.slice(1, 6).map((dayData, index) => (
+            <WeatherCard key={index} dayWeather={dayData} />
+          ))}
         </div>
       </section>
 
       {/* Call to Action Button (Placeholder for Assessment 2) */}
-      <button
+      {/* <button
         className="mt-10 px-8 py-3 bg-[#0B1957] text-white rounded-full text-lg font-semibold hover:bg-opacity-90 transition"
         onClick={() =>
           alert(
@@ -132,7 +183,11 @@ export default function WeatherDisplay() {
         }
       >
         Save This Location
+      </button> */}
+      <button type="button" onClick={() => navigate("/")}>
+        Search another location
       </button>
+      <button>Export as PDF</button>
     </main>
   );
 }

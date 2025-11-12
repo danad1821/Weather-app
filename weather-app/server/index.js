@@ -34,7 +34,7 @@ app.get('/api/weather', async (req, res) => {
 
     try {
         const apiKey = process.env.WEATHER_API_KEY;
-        const days = 6; 
+        const days = 7; 
         const apiUrl = `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${location}&days=${days}&aqi=no`;
 
         const response = await axios.get(apiUrl);
