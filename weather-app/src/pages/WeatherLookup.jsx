@@ -65,6 +65,9 @@ export default function WeatherLookup() {
     if (new Date(startDate) > new Date(endDate)) {
       return alert("Start date cannot be after the end date.");
     }
+    if(new Date(startDate) < new Date()){
+      return alert("Start date cannot be before today due to api's nature");
+    }
 
     setIsSaving(true);
     let fetchedWeatherData = null;
