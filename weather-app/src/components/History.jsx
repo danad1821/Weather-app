@@ -1,17 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { CiTrash, CiEdit, CiSquareCheck } from "react-icons/ci";
-
-// Assuming your backend is running on http://localhost:5000
+import { CiTrash, CiEdit } from "react-icons/ci";
 const API_BASE_URL = "http://localhost:5000/api/history";
+import { FaChevronDown, FaChevronUp  } from "react-icons/fa";
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
   const date = new Date(dateString);
 
-  // Check if the Date object is valid (returns NaN for Invalid Date)
   if (isNaN(date.getTime())) {
-    // This will now clearly show "Invalid Date" if the string is malformed
     return "Invalid Date";
   }
 
@@ -21,7 +18,7 @@ const formatDate = (dateString) => {
 
 // Helper to get average max temp for display
 const getAvgTemp = (forecast) => {
-  if (!forecast || forecast.length === 0) return "N/A"; // Only use the first 5 days for a representative average
+  if (!forecast || forecast.length === 0) return "N/A";
   const relevantForecast = forecast.slice(0, 5);
   const sumOfHighs = relevantForecast.reduce(
     (sum, day) => sum + day.max_temp_c,
@@ -30,7 +27,7 @@ const getAvgTemp = (forecast) => {
   return `${Math.round(sumOfHighs / relevantForecast.length)}°C`;
 };
 
-// NEW: Helper to get the weather condition emoji
+// Helper to get the weather condition emoji
 const getEmoji = (conditionText) => {
   const lowerCaseText = conditionText.toLowerCase();
   if (lowerCaseText.includes("sunny") || lowerCaseText.includes("clear"))
@@ -50,7 +47,7 @@ const getEmoji = (conditionText) => {
   return "⛅";
 };
 
-// NEW: Component for displaying the detailed forecast in a modal
+// Component for displaying the detailed forecast in a modal
 const ForecastModal = ({ isOpen, onClose, forecastData }) => {
   if (!isOpen || !forecastData) return null;
 
@@ -61,16 +58,15 @@ const ForecastModal = ({ isOpen, onClose, forecastData }) => {
         style={{ maxWidth: "600px", padding: "30px" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-2xl font-bold text-[#0B1957] mb-4">
+        <h3 className="text-2xl font-bold text-[#0B1957] mb-4"style={{fontSize: '20px', margin: '10px 0'}}>
           Forecast for {forecastData.location}
         </h3>
-        {/* Forecast Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
-          {/* The forecastData.forecast array is now pre-filtered to the saved date range */}
           {forecastData.forecast.map((day, index) => (
             <div
               key={index}
               className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center"
+              style={{borderRadius: '6px', padding: '10px'}}
             >
               <p className="text-md font-semibold text-[#0B1957]">
                 {formatDate(day.date)}
@@ -94,7 +90,7 @@ const ForecastModal = ({ isOpen, onClose, forecastData }) => {
         </div>
         <div className="flex justify-end mt-6">
           <button
-            style={{ color: "white" }}
+            style={{ color: "white", padding: '10px', border: 'none', margin: '10px 0' }}
             onClick={onClose}
             className="px-4 py-2 text-sm text-white bg-[#0B1957] rounded-full hover:bg-[#081546] transition"
           >
@@ -110,23 +106,23 @@ export default function History({ locationFilter }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isToggled, setIsToggled] = useState(false); // State to control visibility // State for the Edit Notes Modal
+  const [isToggled, setIsToggled] = useState(false); 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
-  const [newNotes, setNewNotes] = useState(""); // NEW State for the Forecast Modal
+  const [newNotes, setNewNotes] = useState(""); 
 
   const [isForecastModalOpen, setIsForecastModalOpen] = useState(false);
-  const [selectedForecast, setSelectedForecast] = useState(null); // --- READ Operation ---
+  const [selectedForecast, setSelectedForecast] = useState(null); //READ Operation
 
   const fetchHistory = useCallback(async () => {
     try {
-      setLoading(true); // 5. RE-INTEGRATED FILTER LOGIC: Use locationFilter to construct the query URL.
+      setLoading(true);
       const url = locationFilter
         ? `${API_BASE_URL}?location=${encodeURIComponent(locationFilter)}`
         : API_BASE_URL;
 
-      const response = await axios.get(url); // Sort by createdAt descending to show latest first
+      const response = await axios.get(url); 
       setHistory(
         response.data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -139,35 +135,30 @@ export default function History({ locationFilter }) {
     } finally {
       setLoading(false);
     }
-  }, [locationFilter]); // ADDED: locationFilter as dependency // Fetch history when component is toggled on or when locationFilter changes
+  }, [locationFilter]); 
 
   useEffect(() => {
     if (isToggled) {
       fetchHistory();
     }
-  }, [isToggled, fetchHistory]); // NEW: Handlers for the Forecast Modal
+  }, [isToggled, fetchHistory]);
 
   const openForecastModal = (item) => {
-    // Ensure there is forecast data before opening
     if (item.weatherData && item.weatherData.forecast) {
       const { startDate, endDate } = item;
 
-      // Convert start and end date strings to Date objects for accurate comparison
       const startDateTime = new Date(startDate);
       const endDateTime = new Date(endDate);
 
-      // Filter: Only include forecast days between the saved startDate and endDate (inclusive)
       const filteredForecast = item.weatherData.forecast.filter((day) => {
-        const forecastDateTime = new Date(day.date); // Convert each forecast day date to a Date object
-
-        // Compare the numeric timestamp of the Date objects
+        const forecastDateTime = new Date(day.date);
         return (
           forecastDateTime.getTime() >= startDateTime.getTime() &&
           forecastDateTime.getTime() <= endDateTime.getTime()
         );
       });
 
-      // Handle case where filtering results in no days (shouldn't happen with valid data)
+      // case where filtering results in no days
       if (filteredForecast.length === 0) {
         alert(
           `No forecast data found between ${formatDate(
@@ -179,7 +170,6 @@ export default function History({ locationFilter }) {
 
       setSelectedForecast({
         location: item.weatherData.location.name || item.locationQuery,
-        // Use the filtered array
         forecast: filteredForecast,
       });
       setIsForecastModalOpen(true);
@@ -194,7 +184,6 @@ export default function History({ locationFilter }) {
   }; // DELETE
 
   const handleDelete = async (id) => {
-    // ... (rest of handleDelete logic)
     if (!confirmDeletion(id)) return;
 
     try {
@@ -249,15 +238,15 @@ export default function History({ locationFilter }) {
         className="flex items-center text-xl font-bold text-[#0B1957] mb-4 cursor-pointer p-4 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
         onClick={() => setIsToggled(!isToggled)}
         style={{
-          justifyContent: "space-between",
+          justifyContent: "center",
           margin: "0 auto",
           maxWidth: "800px",
           padding: "15px",
           marginTop: "30px",
         }}
       >
-        {isToggled ? <CiSquareCheck className="text-3xl mr-2" /> : " "}
         {isToggled ? "Hide Weather History" : "View Weather History"}
+        {isToggled ? <FaChevronUp /> : <FaChevronDown />}
       </h2>
       {isToggled && (
         <div
@@ -299,7 +288,7 @@ export default function History({ locationFilter }) {
                       className={`${
                         index % 2 === 0 ? "bg-gray-50" : "bg-white"
                       } hover:bg-gray-100 transition cursor-pointer`}
-                      onClick={() => openForecastModal(item)} // NEW: Click entire row to open forecast
+                      onClick={() => openForecastModal(item)}
                     >
                       <td className="p-3 text-sm font-medium text-[#B26414]">
                         {item.weatherData?.location?.name || item.locationQuery}
@@ -320,20 +309,19 @@ export default function History({ locationFilter }) {
                         className="p-3 text-center"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        {/* Stop propagation so the action buttons don't trigger the forecast modal */}
                         <button
-                          style={{ color: "white" }}
+                          style={{ color: "white", border: 'none', padding: '10px' }}
                           className="text-white bg-[#B26414] hover:bg-[#8f4e0c] transition p-2 rounded-full mr-2"
                           onClick={() => openEditModal(item)}
                         >
-                          <CiEdit className="text-lg" />
+                          <CiEdit className="text-lg" style={{fontSize: '16px'}} />
                         </button>
                         <button
-                          style={{ color: "white", backgroundColor: "red" }}
+                          style={{ color: "white", backgroundColor: "red", border: 'none', padding: '10px' }}
                           className="text-white bg-red-600 hover:bg-red-700 transition p-2 rounded-full"
                           onClick={() => handleDelete(item._id)}
                         >
-                          <CiTrash className="text-lg" />
+                          <CiTrash className="text-lg" style={{fontSize: '16px'}} />
                         </button>
                       </td>
                     </tr>
@@ -344,29 +332,22 @@ export default function History({ locationFilter }) {
           )}
         </div>
       )}
-      {/* NEW: Forecast Details Modal */}
+      
       <ForecastModal
         isOpen={isForecastModalOpen}
         onClose={closeForecastModal}
         forecastData={selectedForecast}
       />
-      {/* Edit Notes Modal (Custom Modal UI) */}
+      
       {isModalOpen && (
         <div className="modal-overlay">
           <div
             className="modal-content"
             style={{ maxWidth: "400px", padding: "30px" }}
           >
-            <h3 className="text-2xl font-bold text-[#0B1957] mb-4">
+            <h3 className="text-2xl font-bold text-[#0B1957] mb-4" style={{fontSize: '20px', margin: '10px 0'}}>
               Edit Notes
             </h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Editing notes for:
-              <span className="font-semibold">
-                {editingItem?.weatherData?.location?.name ||
-                  editingItem?.locationQuery}
-              </span>
-            </p>
             <textarea
               value={newNotes}
               onChange={(e) => setNewNotes(e.target.value)}
@@ -378,13 +359,15 @@ export default function History({ locationFilter }) {
               <button
                 onClick={closeEditModal}
                 className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-full hover:bg-gray-100 transition"
+                style={{padding: '10px'}}
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdateNotes}
-                style={{ color: "white" }}
+                style={{ color: "white", padding: '10px' }}
                 className="flex items-center px-4 py-2 text-sm text-white bg-[#0B1957] rounded-full hover:bg-[#081546] transition"
+                
               >
                 Save
               </button>

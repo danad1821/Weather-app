@@ -21,10 +21,9 @@ export default function WeatherLookup() {
   const [startDate, setStartDate] = useState(getTodayDate());
   const [endDate, setEndDate] = useState(getDefaultEndDate());
   const [isSaving, setIsSaving] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Modal control state
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Existing function to check current weather
   const handleWeatherLookup = () => {
     if (weatherLocation.trim()) {
       const encodedLocation = encodeURIComponent(weatherLocation.trim());
@@ -35,7 +34,7 @@ export default function WeatherLookup() {
     }
   };
 
-  // Existing function to get current location weather
+  //  get current location weather
   const handleCurrentLocationClick = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -55,7 +54,6 @@ export default function WeatherLookup() {
     }
   };
 
-  // MODIFIED: This function now fetches the data first, then saves it.
   const handleSaveLookup = async (e) => {
     e.preventDefault();
 
@@ -72,20 +70,16 @@ export default function WeatherLookup() {
     let fetchedWeatherData = null;
 
     try {
-      // --- 1. Fetch Weather Data (using your existing API structure) ---
-      // Note: Your current server API /api/weather returns up to 14 days of forecast.
-      // We will fetch that full object.
       const weatherResponse = await axios.get(
         `http://localhost:5000/api/weather?location=${locationToSave}`
       );
       fetchedWeatherData = weatherResponse.data;
 
-      // --- 2. Construct Payload and Save to History ---
       const savePayload = {
         locationQuery: locationToSave,
-        startDate: startDate, // Use user's input start date
-        endDate: endDate, // Use user's input end date
-        weatherData: fetchedWeatherData, // CRUCIAL: Send the retrieved data object
+        startDate: startDate, 
+        endDate: endDate, 
+        weatherData: fetchedWeatherData, 
         notes: `Saved forecast for ${locationToSave} from ${startDate} to ${endDate}.`,
       };
 
@@ -95,8 +89,6 @@ export default function WeatherLookup() {
         `Successfully fetched and saved forecast for ${locationToSave} to History!`
       );
 
-      // Optionally clear the location, but we'll just close the modal for now.
-      // setWeatherLocation("");
       setIsModalOpen(false);
     } catch (err) {
       console.error(
@@ -104,7 +96,7 @@ export default function WeatherLookup() {
         err.response ? err.response.data : err.message
       );
 
-      // Handle a common 404 (location not found) error from the weather API
+      // Handle a 404 error from the weather API
       const errorMessage =
         err.response?.data?.error ||
         "Failed to save data. Check location or server connection.";
@@ -131,6 +123,7 @@ export default function WeatherLookup() {
         <button
           type="button"
           className="rounded-r-lg bg-[#B29414] text-white p-3 hover:bg-[#8f6d0f] transition"
+          style={{fontSize: '20px'}}
           onClick={handleWeatherLookup}
           title="Search current weather"
         >
@@ -147,7 +140,7 @@ export default function WeatherLookup() {
       </button>
       <button
         type="button"
-        className="mt-4 text-[#0B1957] text-sm hover:underline"
+        className="mt-4 text-[#0B1957] text-sm"
         onClick={() => setIsModalOpen(true)}
       >
         Save a Future Lookup Request
@@ -161,7 +154,7 @@ export default function WeatherLookup() {
         onLocationChange={setWeatherLocation}
         onStartDateChange={setStartDate}
         onEndDateChange={setEndDate}
-        onSave={handleSaveLookup} // Pass the save function
+        onSave={handleSaveLookup} 
         isSaving={isSaving}
       />
     </main>

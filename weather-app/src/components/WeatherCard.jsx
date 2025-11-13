@@ -1,7 +1,6 @@
 import React from 'react';
 
 const formatDate = (dateString) => {
-    // The date comes in as "YYYY-MM-DD" from the backend
     const options = { month: 'short', day: 'numeric', year: 'numeric' };
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', options);

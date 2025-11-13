@@ -87,12 +87,12 @@ app.post('/api/history', async (req, res) => {
         if (!locationQuery || !weatherData || !startDate || !endDate) {
             return res.status(400).json({ error: "Missing required fields: locationQuery, startDate, endDate, or weatherData." });
         }
-
+        weatherData.forecast = weatherData.forecast.filter((w) => new Date(w.date) >= new Date(startDate) && new Date(w.date) <= new Date(endDate));
         const newRecord = {
             locationQuery,
             startDate: new Date(startDate),
             endDate: new Date(endDate),
-            weatherData,
+            weatherData: weatherData,
             notes: notes || "", 
             createdAt: new Date(),
         };
@@ -123,8 +123,6 @@ app.get('/api/history', async (req, res) => {
         const filter = {};
         
         if (locationFilter) {
-            // Use a MongoDB Regular Expression to perform a case-insensitive search
-            // for the location string within the 'locationQuery' field.
             filter.locationQuery = { $regex: locationFilter, $options: 'i' };
         }
         

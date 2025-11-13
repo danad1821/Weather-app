@@ -8,16 +8,11 @@ export default function Header() {
     setDisplayDescription(!displayDescription);
   };
 
-  // Helper component for the modal content
   const PMACceleratorModal = () => (
-    // Replaced Tailwind classes with 'modal-overlay'
     <div className="modal-overlay">
-      
-      {/* Replaced Tailwind classes with 'modal-content' */}
+  
       <div className="modal-content">
         
-        {/* Close Button */}
-        {/* Replaced Tailwind classes with 'modal-close-btn' */}
         <button 
           onClick={toggleModal}
           className="modal-close-btn"
@@ -26,12 +21,10 @@ export default function Header() {
           <span style={{ fontSize: '20px', fontWeight: 'bold' }}>X</span>
         </button>
 
-        {/* Title */}
         <h3 style={{ fontSize: '24px', fontWeight: 'bold', color: '#0b1957', marginBottom: '16px', borderBottom: '1px solid #ccc', paddingBottom: '8px' }}>
           Product Manager Accelerator (PMA)
         </h3>
         
-        {/* Scrollable Content */}
         <div className="modal-text-content">
           <p>
             The Product Manager Accelerator Program is designed to support PM professionals through every stage of their careers. From students looking for entry-level jobs to Directors looking to take on a leadership role, our program has helped over hundreds of students fulfill their career aspirations.
@@ -75,7 +68,6 @@ export default function Header() {
 
   return (
     <>
-      {/* Header element using some of your existing styles */}
       <header className="bg-[#0b1957] flex justify-evenly items-center text-white">
         <h2 style={{ color: "white", fontSize: '20px', fontWeight: '600' }}>
           Dana Dabdoub's Weather App
@@ -89,8 +81,6 @@ export default function Header() {
           Info
         </button>
       </header>
-
-      {/* The Modal renders on top of everything when displayDescription is true */}
       {displayDescription && <PMACceleratorModal />}
     </>
   );

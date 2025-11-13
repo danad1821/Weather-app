@@ -52,7 +52,15 @@ button, tr{
     width: 200px;
 }
 
-/* --- Modal Styles for Info Button --- */
+th, td{
+    padding: 10px 5px;
+    font-size: 16px;
+}
+
+td{
+    border-bottom: 1px solid black;
+}
+
 
 .modal-overlay {
     position: fixed;
@@ -60,8 +68,8 @@ button, tr{
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7); /* Black with 70% opacity */
-    z-index: 9999; /* High Z-index to ensure it's on top */
+    background-color: rgba(0, 0, 0, 0.7); 
+    z-index: 9999; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -73,9 +81,9 @@ button, tr{
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 512px; /* max-w-lg approx */
-    max-height: 90vh; /* max-h-[90vh] */
-    overflow-y: auto; /* Scrollable content */
+    max-width: 512px; 
+    max-height: 90vh; 
+    overflow-y: auto; 
     position: relative;
     padding: 24px;
 }
@@ -87,20 +95,20 @@ button, tr{
     padding: 8px;
     border: none;
     background: none;
-    color: #4b5563; /* text-gray-700 approx */
+    color: #4b5563;
     cursor: pointer;
     border-radius: 50%;
 }
 
 .modal-close-btn:hover {
-    background-color: #e5e7eb; /* hover:bg-gray-200 approx */
+    background-color: #e5e7eb;
 }
 
 .modal-text-content > p {
     margin-top: 12px;
-    color: #4b5563; /* text-gray-700 approx */
-    line-height: 1.5; /* leading-relaxed approx */
-    font-size: 14px; /* text-sm approx */
+    color: #4b5563; 
+    line-height: 1.5; 
+    font-size: 14px; 
 }
 
 .modal-list {
